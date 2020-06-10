@@ -1,18 +1,23 @@
 # Probabilistic Auto-Encoder (PAE)
 
-## Setup
-We provide both a **`requirements.txt`** and **`pae.yml`** that list all dependencies and can be used for either installing them with pip:   
-```pip install -r requirements.txt```  
-or creating a conda environment:  
-```conda env create -f pae.yml```   
+Code accompanying the paper *arxiv link here*
+
+## Setup and Dependencies
 
 The package itself can be installed with   
 ``` pip install -e .``` (from inside the PAE directory)
 
-## Running the code
+The python package requires tensorflow<=1.15 and compatible releases of tensorflow-hub, tensorflow-probability and tensorflow-datasets.
+
+Some of the notebooks require tensorflow2, specifically
+tensorflow-datasets       3.1.0                                 
+tensorflow-gpu            2.2.0                   
+tensorflow-hub            0.8.0                    
+tensorflow-probability    0.10.0
+
 To display all the options for running the code, simply run        
 ```python main.py --helpfull```   
-You can specify, e.g., the data set, the latent space dimensionality, the directories for storing the downloaded datasets, the module and model files. The model files can be read with tensorboard.
+You can specify, e.g., the data set, the latent space dimensionality, the directories for storing the downloaded datasets, the module and model files.
 
 ## Reproducing results
 Our results are obtained in 3 steps  
@@ -26,8 +31,7 @@ Our results are obtained in 3 steps
 The model trains by default on Fashion-MNIST, and all default parameters are set to reproduce our submitted results.
 To reproduce one of our models trained on Fashion-MNIST, run, e.g.    
 ```python main.py --loss='AE' --latent-size=4 --model_dir='./my_model_dir' --module_dir='./my_module_dir'```   
-To reproduce the results shown for the celeba dataset<sup>[1]</sup>, run   
-```python main.py --loss='AE' --latent-size=32 --data_set='celeba' --learning_rate=0.005 --dropout_rate=0.2 --batch_size=64 --data_dir='/my_celeba_dir'```   
+
 
 #### ad 2) Training the NF
 Once the AE has been trained, the training of NFs is performed in a jupyter notebook. We choose this setting, because it allows for easy on the spot visualization and analysis. To train the NFs run and follow instructions in   
