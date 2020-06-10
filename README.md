@@ -7,10 +7,9 @@ Code accompanying the paper *arxiv link here*
 The package itself can be installed with   
 ``` pip install -e .``` (from inside the PAE directory)
 
-The python package requires tensorflow<=1.15 and compatible releases of tensorflow-hub, tensorflow-probability and tensorflow-datasets.
+The python package requires tensorflow<=1.15 and compatible releases of tensorflow-hub and tensorflow-probability.
 
-Some of the notebooks require tensorflow2, specifically
-tensorflow-datasets       3.1.0                                 
+Some of the notebooks require tensorflow2, specifically  
 tensorflow-gpu            2.2.0                   
 tensorflow-hub            0.8.0                    
 tensorflow-probability    0.10.0
