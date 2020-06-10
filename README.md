@@ -1,13 +1,13 @@
-# Regularized Normalizing Flow (RNF)
+# Probabilistic Auto-Encoder (PAE)
 
 ## Setup
-We provide both a **`requirements.txt`** and **`rnf.yml`** that list all dependencies and can be used for either installing them with pip:   
+We provide both a **`requirements.txt`** and **`pae.yml`** that list all dependencies and can be used for either installing them with pip:   
 ```pip install -r requirements.txt```  
 or creating a conda environment:  
-```conda env create -f rnf.yml```   
+```conda env create -f pae.yml```   
 
 The package itself can be installed with   
-``` pip install -e .``` (from inside the RNF directory)
+``` pip install -e .``` (from inside the PAE directory)
 
 ## Running the code
 To display all the options for running the code, simply run        
@@ -16,21 +16,21 @@ You can specify, e.g., the data set, the latent space dimensionality, the direct
 
 ## Reproducing results
 Our results are obtained in 3 steps  
-1) train a (V)AE  
-2) train a RealNVP on the encoded data  
-3) analyse downstream tasks  
+1) train an Auto-Encoder (AE)
+2) train a Normalizing Flow (NF) on the encoded data  
+3) analyze downstream tasks  
   a) measure reconstruction error and FID score  
   b) run Out-of-Distribution detection tests  
 
-#### ad 1) (V)AE Training
+#### ad 1) AE Training
 The model trains by default on Fashion-MNIST, and all default parameters are set to reproduce our submitted results.
 To reproduce one of our models trained on Fashion-MNIST, run, e.g.    
 ```python main.py --loss='AE' --latent-size=4 --model_dir='./my_model_dir' --module_dir='./my_module_dir'```   
 To reproduce the results shown for the celeba dataset<sup>[1]</sup>, run   
 ```python main.py --loss='AE' --latent-size=32 --data_set='celeba' --learning_rate=0.005 --dropout_rate=0.2 --batch_size=64 --data_dir='/my_celeba_dir'```   
 
-#### ad 2) Fitting the Real NVP
-Once the VAE or AE has been trained, the fit of the RealNVP is performed in a jupyter notebook. We choose this setting, because it allows for easy on the spot visualization and analysis. To train the realNVP run and follow instructions in   
+#### ad 2) Training the NF
+Once the AE has been trained, the training of NFs is performed in a jupyter notebook. We choose this setting, because it allows for easy on the spot visualization and analysis. To train the NFs run and follow instructions in   
 **`TrainNVP_fmnist.ipynb`** or **`TrainNVP_celeba.ipynb`**
 
 #### ad 3a) Measurement of Reconstruction Errors and FID scores
@@ -63,4 +63,4 @@ Fig 9) **`OOD_detection_density.ipynb`**+**`OOD_detection_no_density.ipynb`**+**
 Fig 10)**`OOD_detection_density.ipynb`**  
 Fig 11)**`OOD_detection_no_density.ipynb`**+**`OOD_detection_ELBO.ipynb`**  
 
-<sup>[1]</sup> : running the RNF on celeba will require downloading the celeba dataset (http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) and preprocessing it with the **`load_celeba_data`** function in **`rnf/load_data.py`**
+<sup>[1]</sup> : running the PAE on celeba will require downloading the celeba dataset (http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) and preprocessing it with the **`load_celeba_data`** function in **`pae/load_data.py`**
