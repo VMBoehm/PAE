@@ -130,12 +130,6 @@ def main(argv):
         os.makedirs('./params')
     pkl.dump(params, open('./params/params_%s_%d_%d_%s_%s_%s.pkl'%(params['data_set'],params['class_label'],params['latent_size'],params['network_type'],params['loss'],params['tag']),'wb'))
  
-    #if params['data_set']=='celeba':
-    #    params['base_sim'] = 32
-    #    input_fns      = crd.build_input_fn_celeba(params)
-    #    train_input_fn = input_fns['train']
-    #    eval_input_fn  = input_fns['validation']
-    #else:
     train_input_fn, eval_input_fn = crd.build_input_fns(params,label=FLAGS.class_label,flatten=flatten)
 
     estimator = tf.estimator.Estimator(model_fn, params=params, config=tf.estimator.RunConfig(model_dir=params['model_dir']))

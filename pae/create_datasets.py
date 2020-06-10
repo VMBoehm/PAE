@@ -16,7 +16,6 @@ import pae.load_data as ld
 import tensorflow as tf
 import numpy as np
 import os
-import tensorflow_datasets as tfds
 from functools import partial
 import scipy.ndimage as ndimage
 
@@ -99,40 +98,3 @@ def build_input_fns(params,label,flatten):
     return train_input_fn, eval_input_fn
 
 
-def build_input_fn_celeba(params):
-    """
-    Creates input functions for training, validation, and testing
-    """
-
-    def input_fn(is_training=False, tag='train', shuffle_buffer=10000):
-
-        data_dir = os.path.join(params['data_dir'],'celeba/')
-
-        if not os.path.isdir(data_dir):
-            os.makedirs(data_dir)
-
-        celeba_builder = tfds.builder('celeb_a')
-        # Download the dataset
-        celeba_builder.download_and_prepare()
-        # Construct a tf.data.Dataset
-        data = celeba_builder.as_dataset(split=tag)
-
-        dset = data#[tag]
-        # Crop celeb image and resize
-        dset = dset.map(lambda x: tf.cast(tf.image.resize_image_with_crop_or_pad(x['image'], 128, 128), tf.float32) / 256.)
-
-        if is_training:
-            dset = dset.repeat()
-            dset = dset.map(lambda x: tf.image.random_flip_left_right(x),num_parallel_calls=2)
-            dset = dset.shuffle(buffer_size=shuffle_buffer)
-
-        dset = dset.batch(params['batch_size'],drop_remainder=True)
-        dset = dset.map(lambda x: tf.image.resize_bilinear(x, (64, 64)),num_parallel_calls=2)
-        dset = dset.prefetch(params['batch_size'])
-        return dset
-
-        return input_fn
-
-    return {'train':partial(input_fn, tag='train', is_training=True),
-            'validation': partial(input_fn, tag='validation'),
-            'test': partial(input_fn, tag='test')}
