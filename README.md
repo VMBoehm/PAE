@@ -9,7 +9,7 @@ https://arxiv.org/abs/2006.05479.
 The PAE is a two-stage generative model, composed of an Auto-Encoder (AE) that is interpreted probabilistically _after_ training with a Normalizing Flow (NF). The AE compresses the data and maps it to a lower dimensional latent space. The Normalizing Flow is used as a density estimator in the AE-encoded space. The PAE can be interpreted as non-linear generalization of probabilistic low-rank PCA or a regularized Normalizing Flow. It generalizes the idea of regularization to reduce the effect of singular latent space variables to non-linear models.
 
 ### Sampling
-![model_illustration](/figures/model_illustration_new.pdf)
+<img src="/figures/for_readme-4a.png" alt="drawing" width="200"/>
 
 Samples are drawn by first sampling from the NF, which maps samples from its prior to the AE latent space distribution and then passing these samples through the AE decoder. This does not only acheive excellent sample quality, but also ensures that the  
 
