@@ -33,12 +33,13 @@ The training of both components of the PAE is simple, stable and does not requir
 ### Out-of-Distribution Detection
 We find that the log probability in the AE latent space is an excellent outlier-detection metric, outperforming other OoD detection metrics
 
-<img src="/figures/for_readme-10.png" alt="drawing" width="250"/> 
+<img src="/figures/for_readme-10.png" alt="drawing" width="700"/> 
 
 ### Data Inpainting and Denoising
 The PAE can be used for data inputation with uncertainty quantification and we provide notebooks with examples.
-
+High quality reconstructions (middle coumn) can be obtained from heavily corrupted data (outermost left column). The underlying true images are shown in the right column. Posterior analysis (central plot) allows for uncertainty quantification from posterior samples (right plot). The first example is indeed compatible with both a 3 and a 5.  
 <img src="/figures/for_readme-9.png" alt="drawing" width="600"/> 
+
 
 ## Reproducing PAE results
 Our results are obtained in 3 steps  
