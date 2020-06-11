@@ -33,9 +33,12 @@ The training of both components of the PAE is simple, stable and does not requir
 ### Out-of-Distribution Detection
 We find that the log probability in the AE latent space is an excellent outlier-detection metric, outperforming other OoD detection metrics
 
+<img src="/figures/for_readme-10.png" alt="drawing" width="250"/> 
+
 ### Data Inpainting and Denoising
 The PAE can be used for data inputation with uncertainty quantification and we provide notebooks with examples.
 
+<img src="/figures/for_readme-9.png" alt="drawing" width="600"/> 
 
 ## Reproducing PAE results
 Our results are obtained in 3 steps  
