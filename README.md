@@ -30,7 +30,7 @@ Once the AE is trained, the training of the NFs is performed in jupyter notebook
 -*Train_NSF_celeb_64.ipynb*    
 
 #### 3a) Measurement of Reconstruction Errors and FID scores
-The performance of the models in terms of FID scores and reconstruction errors can be analyzed with notebooks named   
+The performance of the models in terms of FID scores and reconstruction errors is analyzed with notebooks named   
 -*FIDScore_and_Reconstruction_Error-X.ipynb* (*X*  here is a placeholder)
 
 #### 3b) Out-of-Distribution Detection Tests
@@ -47,7 +47,7 @@ The trained models that were used to obtain the submitted results can be obtaine
 
 ## Figure and Table Index
 - Fig.2 and Table 1 use modules in `modules/fmnist/class-1/latent_size32/`, and notebooks *FIDScore_and_Reconstruction_Error-X.ipynb*.     
-- Fig.3 uses modules in `modules/fmnist/class-1/latent_size64/` and `modules/fmnist/class-1/latent_size128/`.    
+- Fig.3 uses modules in `modules/fmnist/class-1/latent_size64/` and `modules/fmnist/class-1/latent_size128/`. The PAE samples can be visualized in the training notebooks *Train_NSF_FMNIST_64.ipynb* and  *Train_NSF_FMNIST_128.ipynb* or with one of the FID score notebooks.
 - Table 2 can be reproduced with *Out-of-Distribution-Detection.ipynb* and modules in `modules/fmnist/class-1/latent_size64/`  
 - Fig. 4 uses modules in `modules/celeba/class-1/latent_size64/` and can be reproduced with *FIDScore_and_Reconstruction_Error-celeba.ipynb* 
 - Fig. 6 can be reproduced with modules in `modules/mnist/class-1/latent_size8/` and the notebooks *ImageCorruptionMNIST-solidmask.ipynb* and *ImageCorruptionMNIST-noise.ipynb*
