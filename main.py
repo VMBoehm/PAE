@@ -36,7 +36,7 @@ flags.DEFINE_string('data_dir', default=os.path.join(os.path.abspath('./'),'data
 flags.DEFINE_integer('celeba_dim', default=64, help='pixel dimension of celeb data')
 
 flags.DEFINE_float('learning_rate', default=1e-3, help='learning rate')    
-flags.DEFINE_integer('batch_size',default=16, help='batch size')
+flags.DEFINE_integer('batch_size',default=64, help='batch size')
 flags.DEFINE_integer('max_steps', default=500000, help='training steps')    
 flags.DEFINE_integer('n_steps', default=5000, help='number of training steps after which to perform the evaluation')
 flags.DEFINE_enum('loss', 'AE', ['VAE','hybrid','AE'] , help='which objective to optimize')
@@ -49,7 +49,7 @@ flags.DEFINE_boolean('free_bits', default=False, help='whether to train a VAE wi
 flags.DEFINE_float('lambda', default=0, help='free bits parameter')
 flags.DEFINE_boolean('C_annealing', default=True, help='whether to reduce available kl with training')
 flags.DEFINE_float('C', default=18, help='C parameter')
-flags.DEFINE_spaceseplist('augmentation', ['rot','flip','crop','bright'], 'data augmentation types. Must be one or a list of the following: None, rot, flip, crop, bright')
+flags.DEFINE_spaceseplist('augmentation', ['rot'], 'data augmentation types. Must be one or a list of the following: None, rot, flip, crop, bright')
 flags.DEFINE_float('rot_angle', 5., 'maximum rotation in degrees for data augmentation') 
 
 flags.DEFINE_integer('latent_size',default=64, help='dimensionality of latent space')
@@ -60,10 +60,10 @@ flags.DEFINE_integer('n_filt',default=32,help='number of filters to use in the f
 flags.DEFINE_integer('dense_size', default=256, help='number of connnections in the fc resnet')
 flags.DEFINE_integer('n_layers',default=4, help='number of layers in the fc resnet')
 flags.DEFINE_boolean('bias', default=False, help='whether to use a bias in the convolutions')
-flags.DEFINE_float('dropout_rate', default=0, help='dropout rate used in infoGAN')
-flags.DEFINE_float('sigma', default=0.1, help='initial value of sigma in Gaussian likelihood')
+flags.DEFINE_float('dropout_rate', default=0.2, help='dropout rate used in infoGAN')
+flags.DEFINE_float('sigma', default=0.01, help='initial value of sigma in Gaussian likelihood')
 flags.DEFINE_integer('class_label', default=-1, help='number of specific class to train on. -1 for all classes')
-flags.DEFINE_string('tag', default='test', help='optional additional tag that is added to name of the run')
+flags.DEFINE_string('tag', default='v2', help='optional additional tag that is added to name of the run')
 
 
 #conv resnet flags
