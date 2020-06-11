@@ -8,10 +8,20 @@ https://arxiv.org/abs/2006.05479.
 ## How does it work?
 The PAE is a two-stage generative model, composed of an Auto-Encoder (AE) that is interpreted probabilistically _after_ training with a Normalizing Flow (NF). The AE compresses the data and maps it to a lower dimensional latent space. The Normalizing Flow is used as a density estimator in the AE-encoded space. The PAE can be interpreted as non-linear generalization of probabilistic low-rank PCA or a regularized Normalizing Flow. It generalizes the idea of regularization to reduce the effect of singular latent space variables to non-linear models.
 
+<img src="/figures/for_readme-4a.png" alt="drawing" width="250"/>
+
 ### Sampling
-<img src="/figures/for_readme-4a.png" alt="drawing" width="200"/>
+
+<img src="/figures/for_readme-4b.png" alt="drawing" width="250"/>
 
 Samples are drawn by first sampling from the NF, which maps samples from its prior to the AE latent space distribution and then passing these samples through the AE decoder. This does not only acheive excellent sample quality, but also ensures that the  
+
+<img src="/figures/for_readme-4b.png" alt="drawing" width="250"/>
+
+<img src="/figures/for_readme-6.png" alt="drawing" width="250"/>
+
+<img src="/figures/for_readme-1.png" alt="drawing" width="400"/>
+<img src="/figures/for_readme-3.png" alt="drawing" width="400"/>
 
 ### Advantages
 The two stage training allows to first reach optimal reconstruction error and then optimal sample quality. Typical VAE objectives have to balance these two terms, leading to suboptimal results in both reconstruction and sample quality.
