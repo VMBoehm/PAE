@@ -42,8 +42,10 @@ Image inpainting and denoising is performed in
 -*ImageCorruptionMNIST-solidmask.ipynb*   
 -*ImageCorruptionMNIST-noise.ipynb*    
 
-## Trained Models
+## Trained Models and Paramater Files
 The trained models that were used to obtain the submitted results can be obtained from https://zenodo.org/record/3889319. For anonymization, all paths have been changed to relative paths, expecting that the modules are unzipped in the PAE directory. If done otherwise, the module paths (params['module_path']) has to be adapated.
+
+Each (V)AE module comes with a corresponding parameter file in the `params/` folder. The parameter files contain the complete specification of the setttings under which the module was trained. In most notebooks a simple change of the name of the parameter file will result in the corresponding module being loaded and analyzed. 
 
 ## Figure and Table Index
 - Fig.2 and Table 1 use modules in `modules/fmnist/class-1/latent_size32/`, and notebooks *FIDScore_and_Reconstruction_Error-X.ipynb*.     
