@@ -43,7 +43,7 @@ Image inpainting and denoising is performed in
 -*ImageCorruptionMNIST-noise.ipynb*    
 
 ## Trained Models
-The trained models that were used to obtain the submitted results can be obtained from. For anonymization, all paths have been changed to relative paths, expecting that the modules are unzipped in the PAE directory. If done otherwise, the module paths (params['module_path']) has to be adapated.
+The trained models that were used to obtain the submitted results can be obtained from https://zenodo.org/record/3889319. For anonymization, all paths have been changed to relative paths, expecting that the modules are unzipped in the PAE directory. If done otherwise, the module paths (params['module_path']) has to be adapated.
 
 ## Figure and Table Index
 - Fig.2 and Table 1 use modules in `modules/fmnist/class-1/latent_size32/`, and notebooks *FIDScore_and_Reconstruction_Error-X.ipynb*.     
