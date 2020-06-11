@@ -30,31 +30,34 @@ Once the AE is trained, the training of the NFs is performed in jupyter notebook
 *Train_NSF_celeb_64.ipynb*    
 
 #### 3a) Measurement of Reconstruction Errors and FID scores
-The performance of the models in terms of FID scores and reconstruction errors was analyzed with notebooks named
+The performance of the models in terms of FID scores and reconstruction errors was analyzed with notebooks named   
 *FIDScore_and_Reconstruction_Error-X.ipynb*  
 
 #### 3b) Out-of-Distribution Detection Tests
-The OoD tests can be reproduced with
+The OoD tests can be reproduced with   
 *Out-of-Distribution-Detection.ipynb*   
 
 #### 3c) Posterior Analysis
-Image inpainting and denoising is performed in
+Image inpainting and denoising is performed in   
 *ImageCorruptionMNIST-solidmask.ipynb*   
-and
-*ImageCorruptionMNIST-noise.ipynb*   
+and   
+*ImageCorruptionMNIST-noise.ipynb*    
 
 ## Trained Models
 The trained models that were used to obtain the submitted results can be obtained from. For anonymization, all paths have been changed to relative paths, expecting that the modules are unzipped in the PAE directory. If done otherwise, the module paths (params['module_path']) will have to be adapated.
 
-## Figure Index
-
+## Figure and Table Index
+- Fig.2 and Table 1 use modules in `modules/fmnist/class-1/latent-size32/`, and notebooks *FIDScore_and_Reconstruction_Error-X.ipynb*.     
+- Fig.3 uses modules in `modules/fmnist/class-1/latent-size64/` and `modules/fmnist/class-1/latent-size128/`.    
+- Table 2 can be reproduced with *Out-of-Distribution-Detection.ipynb* and modules in `modules/fmnist/class-1/latent-size64/`  
+- Fig. 4 uses modules in `modules/celeba/class-1/latent-size64/` and can be reproduced with *FIDScore_and_Reconstruction_Error-celeba.ipynb* 
+- Fig. 6 can be reproduced with modules in `modules/mnist/class-1/latent-size8/` and the notebooks *ImageCorruptionMNIST-solidmask.ipynb* and *ImageCorruptionMNIST-noise.ipynb*
 
 
 ## Setup and Dependencies
 
-
-The package itself can be installed with   
-``` pip install -e .``` (from inside the PAE directory)
+The PAE package can be installed from inside the PAE directory with  
+``` pip install -e .```
 
 The python package requires tensorflow<=1.15 and compatible releases of tensorflow-hub and tensorflow-probability.
 
@@ -63,7 +66,10 @@ tensorflow-gpu            2.2.0
 tensorflow-hub            0.8.0                    
 tensorflow-probability    0.10.0
 
+the OoD detection requires    
+tensorflow-datasets       3.1.0
 
+and the FID scores require pytorch    
+torch                     1.4.0
 
-
-<sup>[1]</sup> : running the PAE on celeba will require downloading the celeba dataset (http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) and preprocessing it with the **`load_celeba_data`** function in **`pae/load_data.py`**
+Running the PAE on celeba will require downloading the celeba dataset (http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) and preprocessing it with the **`load_celeba_data`** function in **`pae/load_data.py`**
