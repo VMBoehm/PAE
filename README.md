@@ -20,18 +20,18 @@ Running
 displays all the options for running the code. 
 Parameters include the data set, the latent space dimensionality, locations for storing results, the type of loss (AE or VAE), VAE parameters etc.
 The model trains by default on Fashion-MNIST, the default parameters are set to reproduce submitted results.   
-We further provide trained modules to reproduce results (download link below).
+We further provide trained modules to reproduce our submitted results (download link below).
 
 #### 2) Training the NF
-Once the AE is trained, the training of the NFs is performed in jupyter notebooks. We choose this setting, because it allows for easy on the spot visualization and analysis. We provide the original notebooks that were used to train the NF modules that are also inlcuded in the download link.  
+Once the AE is trained, the training of the NFs is performed in jupyter notebooks. We choose this setting, because it allows for easy on the spot visualization and analysis. We provide the original notebooks that were used to train the NF modules in the paper. The trained modules are also inlcuded in the download link.  
 *TrainNVP_fmnist.ipynb*
 *Train_NSF_FMNIST_64.ipynb*    
 *Train_NSF_FMNIST_128.ipynb*  
 *Train_NSF_celeb_64.ipynb*    
 
 #### 3a) Measurement of Reconstruction Errors and FID scores
-The performance of the models in terms of FID scores and reconstruction errors was analyzed with notebooks named   
-*FIDScore_and_Reconstruction_Error-X.ipynb*  
+The performance of the models in terms of FID scores and reconstruction errors can be analyzed with notebooks named   
+*FIDScore_and_Reconstruction_Error-X.ipynb* (*X*  here is a placeholder)
 
 #### 3b) Out-of-Distribution Detection Tests
 The OoD tests can be reproduced with   
@@ -44,7 +44,7 @@ and
 *ImageCorruptionMNIST-noise.ipynb*    
 
 ## Trained Models
-The trained models that were used to obtain the submitted results can be obtained from. For anonymization, all paths have been changed to relative paths, expecting that the modules are unzipped in the PAE directory. If done otherwise, the module paths (params['module_path']) will have to be adapated.
+The trained models that were used to obtain the submitted results can be obtained from. For anonymization, all paths have been changed to relative paths, expecting that the modules are unzipped in the PAE directory. If done otherwise, the module paths (params['module_path']) has to be adapated.
 
 ## Figure and Table Index
 - Fig.2 and Table 1 use modules in `modules/fmnist/class-1/latent-size32/`, and notebooks *FIDScore_and_Reconstruction_Error-X.ipynb*.     
