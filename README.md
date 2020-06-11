@@ -1,5 +1,20 @@
 # Probabilistic Auto-Encoder (PAE)
-Code, ipython notebooks, trained modules and instructions for reproducing PAE results in https://arxiv.org/abs/2006.05479.
+An easy-to-train and evaluate, reliable generative model that achieves state of the art results in data generation, outlier detection and data inpainting and denoising.
+
+For full details, see:
+https://arxiv.org/abs/2006.05479.
+
+
+## How does it work?
+The PAE is a two-stage generative model, composed of an Auto-Encoder (AE) that is interpreted probabilistically _after_ training with a Normalizing Flow (NF). The AE compresses the data and maps it to a lower dimensional latent space. The Normalizing Flow is used as a density estimator in the AE-encoded space. The PAE can be interpreted as non-linear generalization of probabilistic low-rank PCA or a regularized Normalizing Flow. It generalizes the idea of regularization to reduce the effect of singular latent space variables to non-linear models.
+
+### Sampling
+![model_illustration](/figures/model_illustration_new.pdf)
+
+Samples are drawn by first sampling from the NF, which maps samples from its prior to the AE latent space distribution and then passing these samples through the AE decoder. This does not only acheive excellent sample quality, but also ensures that the  
+
+### Advantages
+The two stage training allows to first reach optimal reconstruction error and then optimal sample quality. Typical VAE objectives have to balance these two terms, leading to suboptimal results in both reconstruction and sample quality.
 
 ## Reproducing results
 Our results are obtained in 3 steps  
