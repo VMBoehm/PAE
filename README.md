@@ -1,6 +1,5 @@
 # Probabilistic Auto-Encoder (PAE)
-
-Anonymized code, ipython notebooks, trained modules and instructions for reproducing PAE results.
+Code, ipython notebooks, trained modules and instructions for reproducing PAE results in https://arxiv.org/abs/2006.05479.
 
 ## Reproducing results
 Our results are obtained in 3 steps  
