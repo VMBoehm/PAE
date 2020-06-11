@@ -4,6 +4,8 @@ An easy-to-train and evaluate, reliable generative model that achieves state of 
 For full details, see:
 https://arxiv.org/abs/2006.05479.
 
+**Contributors:** Vanessa Böhm, Uroš Seljak
+
 
 ## How does it work?
 The PAE is a two-stage generative model, composed of an Auto-Encoder (AE) that is interpreted probabilistically _after_ training with a Normalizing Flow (NF). The AE compresses the data and maps it to a lower dimensional latent space. The Normalizing Flow is used as a density estimator in the AE-encoded space. The PAE can be interpreted as non-linear generalization of probabilistic low-rank PCA or a regularized Normalizing Flow. It generalizes the idea of regularization to reduce the effect of undesirable singular latent space variables to non-linear models.
