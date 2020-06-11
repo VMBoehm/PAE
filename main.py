@@ -22,7 +22,6 @@ import os
 import pickle as pkl
 import math
 import sys
-sys.path.append('/global/home/users/vboehm/.local/lib/python3.6/site-packages')
 # tensorflow packages
 import tensorflow as tf
 import tensorflow_hub as hub
