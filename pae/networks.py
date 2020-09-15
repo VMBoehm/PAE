@@ -277,7 +277,7 @@ def fully_connected_encoder(params,is_training):
             net = tf.layers.dense(x, 512, name='dense_1', activation=activation)
             net = tf.layers.dense(net, 256, name='dense_2', activation=activation)
             net = tf.layers.dense(net, 128, name='dense_3', activation=activation)
-            net = tf.layers.dense(net, 2*latent_size, name='dense_4', activation=None)
+            net = tf.layers.dense(net, 2*latent_size, name='dense_4', activation='sigmoid')
         return net
     return encoder 
 
@@ -291,10 +291,36 @@ def fully_connected_decoder(params,is_training):
             net = tf.layers.dense(z, 128, name ='dense_1', activation=activation)
             net = tf.layers.dense(net, 256, name='dense_2', activation=activation)
             net = tf.layers.dense(net, 512, name='dense_3', activation=activation)
-            net = tf.layers.dense(net, params['output_size'] , name='dense_4', activation=None)
-        return net
+            net = tf.layers.dense(net, params['output_size'] , name='dense_4', activation='sigmoid')
+        return net-0.5
     return decoder
 
+
+def vae10_decoder(params,is_training):
+
+    activation = params['activation']
+    latent_size= params['latent_size']
+
+    def decoder(z):
+        with tf.compat.v1.variable_scope('model/decoder', reuse=tf.compat.v1.AUTO_REUSE):
+            net = tf.compat.v1.layers.dense(z, 64, name ='dense_1', activation=activation)
+            net = tf.compat.v1.layers.dense(net, 256, name='dense_2', activation=activation)
+            net = tf.compat.v1.layers.dense(net, 256, name='dense_3', activation=activation)
+            net = tf.compat.v1.layers.dense(net, 1024, name='dense_4', activation=activation)
+            net = tf.compat.v1.layers.dense(net, params['output_size'] , name='dense_5', activation='sigmoid')
+    return decoder
+
+def vae10_encoder(params, is_training):
+    
+    activation = params['activation']
+    latent_size = params['latent_size']
+    
+    def encoder(x):
+        with tf.compat.v1.variable_scope('model/encoder', reuse=tf.compat.v1.AUTO_REUSE):
+            net = tf.compat.v1.layers.dense(x, 256, name='dense_1', activation=activation)
+            net = tf.compat.v1.layers.dense(net,64, name='dense_2', activation=activation)
+            net = tf.compat.v1.layers.dense(net,2*latent_size, name='dense_3') 
+    return network
 
 
 
@@ -312,6 +338,8 @@ def make_encoder(params, is_training):
         encoder_ = resnet_encoder(params, is_training)
     elif network_type=='resnet_fc':
         encoder_ = mnist_resnet_encoder(params, is_training)
+    elif network_type=='vae10':
+        encoder_ = vae10_encoder(params, is_training)
     else:
         raise NotImplementedError("Network type not implemented.")
 
@@ -343,6 +371,8 @@ def make_decoder(params,is_training):
         decoder_ = resnet_decoder(params, is_training)
     elif network_type=='resnet_fc':
         decoder_ = mnist_resnet_decoder(params, is_training)
+    elif network_type=='vae10':
+        decoder_ = vae10_decoder(params, is_training)
     else:
         raise NotImplementedError("Network type not implemented.")
 

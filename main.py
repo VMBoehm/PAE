@@ -30,12 +30,12 @@ import pae.create_datasets as crd
 from  pae.model import model_fn
 
 flags.DEFINE_string('model_dir', default=os.path.join(os.path.abspath('./'),'model'), help='directory for storing the model (absolute path)')
-flags.DEFINE_enum('data_set','fmnist',['fmnist','cifar10','celeba','mnist','banana'], help='the tensorflow-dataset to load')
+flags.DEFINE_enum('data_set','mnist',['fmnist','cifar10','celeba','mnist','banana'], help='the tensorflow-dataset to load')
 flags.DEFINE_string('module_dir', default=os.path.join(os.path.abspath('./'),'modules'), help='directory to which to export the modules (absolute path)')
 flags.DEFINE_string('data_dir', default=os.path.join(os.path.abspath('./'),'data'), help='directory to store the data')
 flags.DEFINE_integer('celeba_dim', default=64, help='pixel dimension of celeb data')
 
-flags.DEFINE_float('learning_rate', default=1e-3, help='learning rate')    
+flags.DEFINE_float('learning_rate', default=1e-4, help='learning rate')    
 flags.DEFINE_integer('batch_size',default=16, help='batch size')
 flags.DEFINE_integer('max_steps', default=500000, help='training steps')    
 flags.DEFINE_integer('n_steps', default=5000, help='number of training steps after which to perform the evaluation')
@@ -49,13 +49,13 @@ flags.DEFINE_boolean('free_bits', default=False, help='whether to train a VAE wi
 flags.DEFINE_float('lambda', default=0, help='free bits parameter')
 flags.DEFINE_boolean('C_annealing', default=True, help='whether to reduce available kl with training')
 flags.DEFINE_float('C', default=18, help='C parameter')
-flags.DEFINE_spaceseplist('augmentation', ['rot','flip','crop','bright'], 'data augmentation types. Must be one or a list of the following: None, rot, flip, crop, bright')
+flags.DEFINE_spaceseplist('augmentation', ['rot'], 'data augmentation types. Must be one or a list of the following: None, rot, flip, crop, bright')
 flags.DEFINE_float('rot_angle', 5., 'maximum rotation in degrees for data augmentation') 
 
-flags.DEFINE_integer('latent_size',default=64, help='dimensionality of latent space')
-flags.DEFINE_string('activation', default='leaky_relu', help='activation function')
+flags.DEFINE_integer('latent_size',default=10, help='dimensionality of latent space')
+flags.DEFINE_string('activation', default='tanh', help='activation function')
 flags.DEFINE_integer('n_samples', default=16, help='number of samples for encoding')
-flags.DEFINE_enum('network_type', 'infoGAN', ['fully_connected','conv', 'infoGAN','resnet_fc','resnet_conv'], help='which type of network to use, currently supported: fully_conneted and conv')
+flags.DEFINE_enum('network_type', 'vae10', ['vae10','fully_connected','conv', 'infoGAN','resnet_fc','resnet_conv'], help='which type of network to use, currently supported: fully_conneted and conv')
 flags.DEFINE_integer('n_filt',default=32,help='number of filters to use in the first convolutional layer')
 flags.DEFINE_integer('dense_size', default=256, help='number of connnections in the fc resnet')
 flags.DEFINE_integer('n_layers',default=4, help='number of layers in the fc resnet')

@@ -69,7 +69,7 @@ def build_input_fns(params,label,flatten,num_repeat=2):
                 xx = dequantize(x_train[inds])
                 if 'rot' in params['augmentation']:
                     xx = random_rotate_image(xx,params,flatten)
-                return xx/255.-0.5
+                return xx/256.-0.5
             xx = tf.py_func(extract_images,[x],tf.float32)
             xx.set_shape(shape)
             return xx
@@ -85,7 +85,7 @@ def build_input_fns(params,label,flatten,num_repeat=2):
         def mapping_function(x):
             def extract_images(inds):
                 xx = dequantize(x_test[inds])
-                return xx/255.-0.5
+                return xx/256.-0.5
             xx = tf.py_func(extract_images,[x],tf.float32)
             xx.set_shape(shape)
             return xx
