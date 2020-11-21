@@ -55,7 +55,7 @@ flags.DEFINE_float('rot_angle', 5., 'maximum rotation in degrees for data augmen
 flags.DEFINE_integer('latent_size',default=10, help='dimensionality of latent space')
 flags.DEFINE_string('activation', default='tanh', help='activation function')
 flags.DEFINE_integer('n_samples', default=16, help='number of samples for encoding')
-flags.DEFINE_enum('network_type', 'vae10', ['vae10','fully_connected','conv', 'infoGAN','resnet_fc','resnet_conv'], help='which type of network to use, currently supported: fully_conneted and conv')
+flags.DEFINE_enum('network_type', 'fully_connected', ['vae10','fully_connected','conv', 'infoGAN','resnet_fc','resnet_conv'], help='which type of network to use, currently supported: fully_conneted and conv')
 flags.DEFINE_integer('n_filt',default=32,help='number of filters to use in the first convolutional layer')
 flags.DEFINE_integer('dense_size', default=256, help='number of connnections in the fc resnet')
 flags.DEFINE_integer('n_layers',default=4, help='number of layers in the fc resnet')
