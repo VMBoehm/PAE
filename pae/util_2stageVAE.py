@@ -1,5 +1,5 @@
 import tensorflow as tf 
-from tensorflow.contrib import layers 
+from tensorflow.keras import layers
 import math 
 import numpy as np 
 from tensorflow.python.training.moving_averages import assign_moving_average
@@ -20,11 +20,11 @@ def spectral_norm(input_):
 
     # Persisted approximation of first left singular vector of matrix `w`.
 
-    u_var = tf.get_variable(
+    u_var = tf.compat.v1.get_variable(
         input_.name.replace(":", "") + "/u_var",
         shape=(w.shape[0], 1),
         dtype=w.dtype,
-        initializer=tf.random_normal_initializer(),
+        initializer=tf.compat.v1.random_normal_initializer(),
         trainable=False)
     u = u_var
 
@@ -36,11 +36,11 @@ def spectral_norm(input_):
     power_iteration_rounds = 1
     for _ in range(power_iteration_rounds):
         # `v` approximates the first right singular vector of matrix `w`.
-        v = tf.nn.l2_normalize(tf.matmul(tf.transpose(w), u), dim=None, epsilon=1e-12)
-        u = tf.nn.l2_normalize(tf.matmul(w, v), dim=None, epsilon=1e-12)
+        v = tf.nn.l2_normalize(tf.matmul(tf.transpose(a=w), u), axis=None, epsilon=1e-12)
+        u = tf.nn.l2_normalize(tf.matmul(w, v), axis=None, epsilon=1e-12)
 
     # Update persisted approximation.
-    with tf.control_dependencies([tf.assign(u_var, u, name="update_u")]):
+    with tf.control_dependencies([tf.compat.v1.assign(u_var, u, name="update_u")]):
         u = tf.identity(u)
 
     # The authors of SN-GAN chose to stop gradient propagating through u and v.
@@ -50,7 +50,7 @@ def spectral_norm(input_):
     v = tf.stop_gradient(v)
 
     # Largest singular value of `w`.
-    norm_value = tf.matmul(tf.matmul(tf.transpose(u), w), v)
+    norm_value = tf.matmul(tf.matmul(tf.transpose(a=u), w), v)
     norm_value.shape.assert_is_fully_defined()
     norm_value.shape.assert_is_compatible_with([1, 1])
 
@@ -62,26 +62,26 @@ def spectral_norm(input_):
 
 
 def conv2d(input_, output_dim, k_h, k_w, d_h, d_w, stddev=0.02, name="conv2d",
-           initializer=tf.truncated_normal_initializer, use_sn=False):
-  with tf.variable_scope(name):
-    w = tf.get_variable(
+           initializer=tf.compat.v1.truncated_normal_initializer, use_sn=False):
+  with tf.compat.v1.variable_scope(name):
+    w = tf.compat.v1.get_variable(
         "w", [k_h, k_w, input_.get_shape()[-1], output_dim],
         initializer=initializer(stddev=stddev))
     if use_sn:
-      conv = tf.nn.conv2d(input_, spectral_norm(w), strides=[1, d_h, d_w, 1], padding="SAME")
+      conv = tf.nn.conv2d(input=input_, filters=spectral_norm(w), strides=[1, d_h, d_w, 1], padding="SAME")
     else:
-      conv = tf.nn.conv2d(input_, w, strides=[1, d_h, d_w, 1], padding="SAME")
-    biases = tf.get_variable(
-        "biases", [output_dim], initializer=tf.constant_initializer(0.0))
+      conv = tf.nn.conv2d(input=input_, filters=w, strides=[1, d_h, d_w, 1], padding="SAME")
+    biases = tf.compat.v1.get_variable(
+        "biases", [output_dim], initializer=tf.compat.v1.constant_initializer(0.0))
     return tf.reshape(tf.nn.bias_add(conv, biases), conv.get_shape())
 
 
 def linear(input_, output_size, scope=None, stddev=0.02, bias_start=0.0, use_sn=False):
     shape = input_.get_shape().as_list()
 
-    with tf.variable_scope(scope or "Linear"):
-        matrix = tf.get_variable("Matrix", [shape[1], output_size], tf.float32, tf.random_normal_initializer(stddev=stddev))
-        bias = tf.get_variable("bias", [output_size], initializer=tf.constant_initializer(bias_start))
+    with tf.compat.v1.variable_scope(scope or "Linear"):
+        matrix = tf.compat.v1.get_variable("Matrix", [shape[1], output_size], tf.float32, tf.compat.v1.random_normal_initializer(stddev=stddev))
+        bias = tf.compat.v1.get_variable("bias", [output_size], initializer=tf.compat.v1.constant_initializer(bias_start))
         if use_sn:
             return tf.matmul(input_, spectral_norm(matrix)) + bias
         else:
@@ -93,7 +93,7 @@ def lrelu(input_, leak=0.2, name="lrelu"):
 
 
 def batch_norm(x, is_training, scope, eps=1e-5, decay=0.999, affine=True):
-    return tf.layers.batch_normalization(x,axis=-1,momentum=decay,epsilon=eps)
+    return tf.compat.v1.layers.batch_normalization(x,axis=-1,momentum=decay,epsilon=eps)
 
     
 #    def mean_var_with_update(moving_mean, moving_variance):
@@ -121,48 +121,48 @@ def batch_norm(x, is_training, scope, eps=1e-5, decay=0.999, affine=True):
 
 
 def deconv2d(input_, output_shape, k_h, k_w, d_h, d_w, stddev=0.02, name="deconv2d"):
-    with tf.variable_scope(name):
-        w = tf.get_variable("w", [k_h, k_w, output_shape[-1], input_.get_shape()[-1]], initializer=tf.random_normal_initializer(stddev=stddev))
+    with tf.compat.v1.variable_scope(name):
+        w = tf.compat.v1.get_variable("w", [k_h, k_w, output_shape[-1], input_.get_shape()[-1]], initializer=tf.compat.v1.random_normal_initializer(stddev=stddev))
         deconv = tf.nn.conv2d_transpose(input_, w, output_shape=output_shape, strides=[1, d_h, d_w, 1])
-        biases = tf.get_variable("biases", [output_shape[-1]], initializer=tf.constant_initializer(0.0))
+        biases = tf.compat.v1.get_variable("biases", [output_shape[-1]], initializer=tf.compat.v1.constant_initializer(0.0))
     return tf.reshape(tf.nn.bias_add(deconv, biases), deconv.get_shape())
 
 
 def downsample(x, out_dim, kernel_size, name):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         input_shape = x.get_shape().as_list()
         assert(len(input_shape) == 4)
-        return tf.layers.conv2d(x, out_dim, kernel_size, 2, 'same')
+        return tf.compat.v1.layers.conv2d(x, out_dim, kernel_size, 2, 'same')
 
 
 def upsample(x, out_dim, kernel_size, name):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         input_shape = x.get_shape().as_list()
         assert(len(input_shape) == 4)
-        return tf.layers.conv2d_transpose(x, out_dim, kernel_size, 2, 'same')
+        return tf.compat.v1.layers.conv2d_transpose(x, out_dim, kernel_size, 2, 'same')
 
 
 def res_block(x, out_dim, is_training, name, depth=2, kernel_size=3):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         y = x
         for i in range(depth):
             y = tf.nn.relu(batch_norm(y, is_training, 'bn'+str(i)))
-            y = tf.layers.conv2d(y, out_dim, kernel_size, padding='same', name='layer'+str(i))
-        s = tf.layers.conv2d(x, out_dim, kernel_size, padding='same', name='shortcut')
+            y = tf.compat.v1.layers.conv2d(y, out_dim, kernel_size, padding='same', name='layer'+str(i))
+        s = tf.compat.v1.layers.conv2d(x, out_dim, kernel_size, padding='same', name='shortcut')
         return y + s 
 
 
 def res_fc_block(x, out_dim, name, depth=2):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         y = x 
         for i in range(depth):
-            y = tf.layers.dense(tf.nn.relu(y), out_dim, name='layer'+str(i))
-        s = tf.layers.dense(x, out_dim, name='shortcut')
+            y = tf.compat.v1.layers.dense(tf.nn.relu(y), out_dim, name='layer'+str(i))
+        s = tf.compat.v1.layers.dense(x, out_dim, name='shortcut')
         return y + s 
 
 
 def scale_block(x, out_dim, is_training, name, block_per_scale=1, depth_per_block=2, kernel_size=3):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         y = x 
         for i in range(block_per_scale):
             y = res_block(y, out_dim, is_training, 'block'+str(i), depth_per_block, kernel_size)
@@ -170,7 +170,7 @@ def scale_block(x, out_dim, is_training, name, block_per_scale=1, depth_per_bloc
 
 
 def scale_fc_block(x, out_dim, name, block_per_scale=1, depth_per_block=2):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         y = x 
         for i in range(block_per_scale):
             y = res_fc_block(y, out_dim, 'block'+str(i), depth_per_block)

@@ -25,7 +25,7 @@ import sys
 # tensorflow packages
 import tensorflow as tf
 import tensorflow_hub as hub
-
+tf.compat.v1.disable_eager_execution()
 import pae.create_datasets as crd
 from  pae.model import model_fn
 
@@ -132,7 +132,7 @@ def main(argv):
     train_input_fn, eval_input_fn = crd.build_input_fns(params,label=FLAGS.class_label,flatten=flatten)
 
     estimator = tf.estimator.Estimator(model_fn, params=params, config=tf.estimator.RunConfig(model_dir=params['model_dir']))
-    c         = tf.placeholder(tf.float32,params['full_size'])
+    c         = tf.compat.v1.placeholder(tf.float32,params['full_size'])
     serving_input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(features=dict(x=c))
 
     exporter   = hub.LatestModuleExporter("tf_hub", serving_input_fn)
@@ -149,4 +149,4 @@ def main(argv):
     return True
 
 if __name__ == "__main__":
-    tf.app.run()
+    tf.compat.v1.app.run()

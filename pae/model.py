@@ -31,20 +31,20 @@ def make_images(images, nrows, ncols,shape):
     width  = shape[-3]
     height = shape[-2]
     depth  = shape[-1]
-    bsize  = tf.shape(images)[0]
+    bsize  = tf.shape(input=images)[0]
     images = tf.reshape(images, (-1, width, height, depth))
     nrows  = tf.minimum(nrows, bsize)
     ncols  = tf.minimum(bsize//nrows, ncols)
     images = images[:nrows * ncols]
     images = tf.reshape(images, (nrows, ncols, width, height, depth))
-    images = tf.transpose(images, [0, 2, 1, 3, 4])
+    images = tf.transpose(a=images, perm=[0, 2, 1, 3, 4])
     images = images+0.5
     images = tf.clip_by_value(tf.reshape(images, [1, nrows * width, ncols * height, depth]), 0, 1)
     return images
 
 
 def image_tile_summary(name, tensor, rows, cols, shape):
-    tf.summary.image(name, make_images(tensor, rows, cols, shape), max_outputs=1)
+    tf.compat.v1.summary.image(name, make_images(tensor, rows, cols, shape), max_outputs=1)
 #######
 
 def get_prior(latent_size):
@@ -54,14 +54,14 @@ def get_GN_covariance(decoded,z,params):
 
     ones  = tf.linalg.eye(params['latent_size'], batch_shape=[params['batch_size']],dtype=tf.float32) 
     
-    with tf.variable_scope("likelihood", reuse=tf.AUTO_REUSE):
-        sigma = tf.get_variable(name='sigma', initializer=tf.ones([np.prod(params['output_size'])])*params['sigma'])
+    with tf.compat.v1.variable_scope("likelihood", reuse=tf.compat.v1.AUTO_REUSE):
+        sigma = tf.compat.v1.get_variable(name='sigma', initializer=tf.ones([np.prod(params['output_size'])])*params['sigma'])
     decoded = tf.reshape(decoded,[params['batch_size'],-1])
-    grad_g  = tf.gather(tf.gradients(decoded/sigma,z),0)
+    grad_g  = tf.gather(tf.gradients(ys=decoded/sigma,xs=z),0)
     grad_g2 = tf.einsum('ij,ik->ijk',grad_g,grad_g)
     GNhess  = ones#+grad_g2
     cov     = tf.linalg.inv(GNhess)
-    cov     = 0.5*(cov+tf.linalg.transpose(cov))
+    cov     = 0.5*(cov+tf.linalg.matrix_transpose(cov))
     det     = tf.linalg.det(cov)
 
 #    hess    = tf.hessians(decoded,z)
@@ -119,7 +119,7 @@ def model_fn(features, labels, mode, params, config):
     encoder          = nw.make_encoder(params, is_training)
     decoder          = nw.make_decoder(params, is_training)
     
-    global_step      = tf.train.get_or_create_global_step()
+    global_step      = tf.compat.v1.train.get_or_create_global_step()
     #stage            = tf.greater(global_step,tf.constant(params['max_steps']//2,dtype=tf.int64))
     #stage2           = tf.equal(global_step,tf.constant(params['max_steps']//2,dtype=tf.int64))
 
@@ -139,11 +139,11 @@ def model_fn(features, labels, mode, params, config):
     #sigma_mean       = sigma_mean*tf.ones([np.prod(params['output_size'])])
 
     #first averaging over batch then sqrt      
-    sigma_pixel      = tf.sqrt(tf.reduce_mean(chi2,axis=0))
+    sigma_pixel      = tf.sqrt(tf.reduce_mean(input_tensor=chi2,axis=0))
     #ema              = tf.train.ExponentialMovingAverage(decay=0.99)
     #ema.apply([sigma_pixel])
     
-    sigma_mean       = tf.sqrt(tf.reduce_mean(chi2))
+    sigma_mean       = tf.sqrt(tf.reduce_mean(input_tensor=chi2))
     #sigma_mean       = sigma_mean*tf.ones([np.prod(params['output_size'])])
 
     #sigma_est        = tf.cond(tf.constant(params['full_sigma'],dtype=tf.bool),lambda: sigma_pixel,lambda: sigma_mean)
@@ -156,7 +156,7 @@ def model_fn(features, labels, mode, params, config):
     #    sigma        = tf.cond(stage2,lambda:sigma.assign(sigma_reg),lambda:sigma)
     
     if params['sigma_annealing']:
-        sigma = tf.cond(global_step<200000,lambda: 1.-tf.cast(global_step,tf.float32)/200000.*(1.-params['sigma']), lambda: params['sigma'])
+        sigma = tf.cond(pred=global_step<200000,true_fn=lambda: 1.-tf.cast(global_step,tf.float32)/200000.*(1.-params['sigma']), false_fn=lambda: params['sigma'])
     else:
         sigma = params['sigma']
 
@@ -164,7 +164,7 @@ def model_fn(features, labels, mode, params, config):
 
     
     map_likelihood   = likelihood(MAP).log_prob(tf.reshape(features,[params['batch_size'],-1]))
-    kl               = 0.5 * tf.reduce_sum(tf.square(approx_posterior.scale.diag) + tf.square(approx_posterior.loc) - tf.log(tf.square(approx_posterior.scale.diag))-1, axis=-1)
+    kl               = 0.5 * tf.reduce_sum(input_tensor=tf.square(approx_posterior.scale.diag) + tf.square(approx_posterior.loc) - tf.math.log(tf.square(approx_posterior.scale.diag))-1, axis=-1)
     
     kl_lambda         = tf.maximum(kl - params['lambda'], 0.0)
     posterior_sample  = approx_posterior.sample()
@@ -178,7 +178,7 @@ def model_fn(features, labels, mode, params, config):
         beta = 1.
 
     if params['C_annealing']:
-        C = tf.cond(global_step<100000,lambda: tf.cast(global_step,tf.float32)/100000.*params['C'], lambda: params['C'])
+        C = tf.cond(pred=global_step<100000,true_fn=lambda: tf.cast(global_step,tf.float32)/100000.*params['C'], false_fn=lambda: params['C'])
     else:
         C = 0.
 
@@ -188,29 +188,29 @@ def model_fn(features, labels, mode, params, config):
         objective_VAE    = sample_likelihood-beta*tf.math.abs(kl-C)
 
     if mode in [tf.estimator.ModeKeys.TRAIN, tf.estimator.ModeKeys.EVAL]:
-        tf.summary.scalar('log_likelihood',tf.reduce_mean(map_likelihood))
+        tf.compat.v1.summary.scalar('log_likelihood',tf.reduce_mean(input_tensor=map_likelihood))
         if params['loss']=='VAE':
-            tf.summary.scalar('beta',beta)
-            tf.summary.scalar('KL_divergence',tf.reduce_mean(kl))
-            tf.summary.scalar('KL_divergence_beta',tf.reduce_mean(kl*beta))
-            tf.summary.scalar('free_bits_kl', tf.reduce_mean(kl_lambda))
-            tf.summary.scalar('elbo',tf.reduce_mean(objective_VAE))
-            tf.summary.scalar('sigma_train',sigma)
-        tf.summary.scalar('sigma', tf.reduce_mean(sigma_mean))
+            tf.compat.v1.summary.scalar('beta',beta)
+            tf.compat.v1.summary.scalar('KL_divergence',tf.reduce_mean(input_tensor=kl))
+            tf.compat.v1.summary.scalar('KL_divergence_beta',tf.reduce_mean(input_tensor=kl*beta))
+            tf.compat.v1.summary.scalar('free_bits_kl', tf.reduce_mean(input_tensor=kl_lambda))
+            tf.compat.v1.summary.scalar('elbo',tf.reduce_mean(input_tensor=objective_VAE))
+            tf.compat.v1.summary.scalar('sigma_train',sigma)
+        tf.compat.v1.summary.scalar('sigma', tf.reduce_mean(input_tensor=sigma_mean))
 
         if params['loss']=='VAE':
-            loss         = -tf.reduce_mean(objective_VAE)
+            loss         = -tf.reduce_mean(input_tensor=objective_VAE)
         else:
-            loss         = -tf.reduce_mean(objective_AE)
+            loss         = -tf.reduce_mean(input_tensor=objective_AE)
 
-        all_vars         = tf.trainable_variables()
+        all_vars         = tf.compat.v1.trainable_variables()
         train_vars       = [var for var in all_vars if 'sigma' not in var.name]
 
-        lr               = tf.cond(global_step<(4*params['max_steps']//5), lambda: params['learning_rate'], lambda: params['learning_rate']/10.)
+        lr               = tf.cond(pred=global_step<(4*params['max_steps']//5), true_fn=lambda: params['learning_rate'], false_fn=lambda: params['learning_rate']/10.)
 
-        tf.summary.scalar('learning_rate',lr)
+        tf.compat.v1.summary.scalar('learning_rate',lr)
 
-        optimizer        = tf.train.AdamOptimizer(lr)
+        optimizer        = tf.compat.v1.train.AdamOptimizer(lr)
 
         train_op         = optimizer.minimize(loss,var_list=train_vars,global_step=global_step)
 
@@ -226,10 +226,10 @@ def model_fn(features, labels, mode, params, config):
             image_tile_summary('prior_samples',samples, rows=4, cols=4, shape=params['data_shape'])  
 
         eval_metric_ops={
-                'log_likelihood': tf.metrics.mean(map_likelihood),
+                'log_likelihood': tf.compat.v1.metrics.mean(map_likelihood),
         #        'log_prior_at_MAP': tf.metrics.mean(map_prior),
         #        'KL_divergence': tf.metrics.mean(kl),
-                'sigma':tf.metrics.mean(sigma_mean),
+                'sigma':tf.compat.v1.metrics.mean(sigma_mean),
         #        'elbo':tf.metrics.mean(objective_VAE),
         #        'KL_laplace_prior':tf.metrics.mean(kl_laplace_prior),
         #        'KL_laplace_vmf':tf.metrics.mean(kl_laplace_vmf),
@@ -237,11 +237,11 @@ def model_fn(features, labels, mode, params, config):
                 #'full_Hessian_determinant': tf.metrics.mean(detC),
         }
 
-        eval_summary_hook = tf.train.SummarySaverHook(save_steps=1,output_dir=params['model_dir'],summary_op=tf.summary.merge_all())
+        eval_summary_hook = tf.estimator.SummarySaverHook(save_steps=1,output_dir=params['model_dir'],summary_op=tf.compat.v1.summary.merge_all())
         evaluation_hooks  = [eval_summary_hook]
         
         return tf.estimator.EstimatorSpec(mode=mode, loss=loss, train_op=train_op, eval_metric_ops = eval_metric_ops, evaluation_hooks=evaluation_hooks)
     else:
-        predictions = {'likelihood_pred':tf.reduce_mean(map_likelihood)}
+        predictions = {'likelihood_pred':tf.reduce_mean(input_tensor=map_likelihood)}
     
         return tf.estimator.EstimatorSpec(mode=mode,predictions=predictions)

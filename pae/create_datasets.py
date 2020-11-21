@@ -55,7 +55,7 @@ def build_input_fns(params,label,flatten,num_repeat=2):
     def augment(image):
         if 'crop' in params['augmentation']:
             image = tf.image.random_crop(image, [params['batch_size'],params['width']-6,params['height'],params['n_channels']]) 
-            image = tf.image.resize_images(image, size=[params['width'],params['height']]) 
+            image = tf.image.resize(image, size=[params['width'],params['height']]) 
         if 'bright' in params['augmentation']:
             image = tf.image.random_brightness(image, max_delta=0.2) # Random brightness
         if 'flip' in params['augmentation']:
@@ -70,7 +70,7 @@ def build_input_fns(params,label,flatten,num_repeat=2):
                 if 'rot' in params['augmentation']:
                     xx = random_rotate_image(xx,params,flatten)
                 return xx/256.-0.5
-            xx = tf.py_func(extract_images,[x],tf.float32)
+            xx = tf.compat.v1.py_func(extract_images,[x],tf.float32)
             xx.set_shape(shape)
             return xx
 
@@ -86,7 +86,7 @@ def build_input_fns(params,label,flatten,num_repeat=2):
             def extract_images(inds):
                 xx = dequantize(x_test[inds])
                 return xx/256.-0.5
-            xx = tf.py_func(extract_images,[x],tf.float32)
+            xx = tf.compat.v1.py_func(extract_images,[x],tf.float32)
             xx.set_shape(shape)
             return xx
 
