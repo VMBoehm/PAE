@@ -70,7 +70,7 @@ load_funcs=dict(mnist=ld.load_mnist, fmnist=ld.load_fmnist)
 # In[7]:
 
 
-PROJECT_PATH = "../../" 
+PROJECT_PATH = "../" 
 PARAMS_PATH = os.path.join(PROJECT_PATH,'params')
 
 param_file  = 'params_fmnist_-1_64_infoGAN_AE_v2rot_full_sigma'
@@ -98,7 +98,7 @@ x_test  = (x_test/256.-0.5).astype(np.float32)
 x_valid = (x_valid/256.-0.5).astype(np.float32)
 
 
-load_func                                          = partial(load_funcs['MNIST'])
+load_func                                          = partial(load_funcs['mnist'])
 x_train_ood, y_train, x_valid_ood, y_valid, x_test_ood, y_test = load_func(params['data_dir'],flatten=False)
 
 if np.all(x_test)==None:
@@ -110,6 +110,7 @@ x_valid_ood = (x_valid_ood/256.-0.5).astype(np.float32)
 
 
 # In[10]:
+params['module_dir']='../modules/fmnist/class-1/latent_size64/net_type_infoGAN/loss_AE/v2rot_full_sigma/'
 
 
 generator_path   = os.path.join(params['module_dir'],'decoder')
@@ -300,7 +301,7 @@ def run_chain(adapative_hmc, z_ini, num_burnin_steps):
 
 begin = time.time()
 samples_ = []
-for ii in range(0,50):
+for ii in range(100,156):
     print(ii)
     for jj, burnin in enumerate([50]):
         for nn, numsteps in enumerate([3]):
@@ -320,6 +321,6 @@ print(samples.shape)
 #         logps[kk,nn] = LP.logp(samples[kk,nn])
 # samples = samples.reshape((-1,params['batch_size'],params['latent_size']))
 # logps    = logps.reshape((-1,params['batch_size']))
-np.save(os.path.join('/global/cscratch1/sd/vboehm/PAE_samples/FMNIST/latent_dim64/samples','HMC_MNIST_latent_dim%d_burnin%d_leapfrog%d_1.npy'%(params['latent_size'],burnin,numsteps)),samples)
+np.save(os.path.join('/global/cscratch1/sd/vboehm/PAE_samples/FMNIST/latent_dim64/samples','HMC_MNIST_latent_dim%d_burnin%d_leapfrog%d_3.npy'%(params['latent_size'],burnin,numsteps)),samples)
 #print('time:', end/60)
 
