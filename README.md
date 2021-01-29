@@ -7,7 +7,7 @@ https://arxiv.org/abs/2006.05479.
 **Contributors:** Vanessa Böhm, Uroš Seljak
 
 ### _Latest Updates:_
-We have added [a new notebook](https://github.com/VMBoehm/PAE/blob/master/TrainNVP_simplified_and_explained.ipynb) with detailed instructions for training the second PAE stage (the normalizing flow). The notebook is google colab compatible (status Jan '21). 
+We have added [a new simplified notebook](https://github.com/VMBoehm/PAE/blob/master/TrainNVP_simplified_and_explained.ipynb) with detailed instructions for training the second PAE stage (the normalizing flow). The notebook can be run on Google Colab (status Jan '21). 
 
 ## How does it work?
 The PAE is a two-stage generative model, composed of an Auto-Encoder (AE) that is interpreted probabilistically _after_ training with a Normalizing Flow (NF). The AE compresses the data and maps it to a lower dimensional latent space. The Normalizing Flow is used as a density estimator in the AE-encoded space. The PAE can be interpreted as non-linear generalization of probabilistic low-rank PCA or a regularized Normalizing Flow. It generalizes the idea of regularization to reduce the effect of undesirable singular latent space variables to non-linear models.
