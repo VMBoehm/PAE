@@ -70,7 +70,7 @@ load_funcs=dict(mnist=ld.load_mnist, fmnist=ld.load_fmnist)
 # In[7]:
 
 
-PROJECT_PATH = "../../" 
+PROJECT_PATH = "../" 
 PARAMS_PATH = os.path.join(PROJECT_PATH,'params')
 
 param_file  = 'params_fmnist_-1_32_infoGAN_VAE_v2_full_sigma_beta100_C15'
@@ -80,8 +80,8 @@ params      = pickle.load(open(os.path.join(PARAMS_PATH,param_file+'.pkl'),'rb')
 # In[8]:
 
 
-# params['module_dir']='../../modules/mnist/class-1/latent_size10/net_type_vae10/loss_AE/test_full_sigma'
-# params['data_dir']= '../../data/'
+params['module_dir']='../modules/fmnist/class-1/latent_size32/net_type_infoGAN/loss_VAE/v2_full_sigma_beta100_C15'
+params['data_dir']= '../data/'
 
 
 # In[9]:
@@ -237,7 +237,7 @@ def get_kernel(ii,num_burnin_steps, num_lp_steps):
     return adaptive_hmc, z_ini, LP
 
 # Run the chain (with burn-in).
-@tf.function()
+#@tf.function()
 def run_chain(adapative_hmc, z_ini, num_burnin_steps):
   # Run the chain (with burn-in).
     samples, [step_size, accept_ratio, leapfrogs] = tfp.mcmc.sample_chain(
