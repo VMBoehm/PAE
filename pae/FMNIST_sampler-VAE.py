@@ -42,7 +42,7 @@ import tensorflow_hub as hub
 tfd = tfp.distributions
 tfb = tfp.bijectors
 tf.__version__
-tf.config.list_physical_devices('GPU')
+print(tf.config.list_physical_devices('GPU'))
 
 
 # In[4]:
@@ -224,20 +224,20 @@ initial_step_size = np.ones((params['batch_size'],params['latent_size']))*0.02
 num_results = int(100)
 print(num_results)
 
-def get_kernel(ii,num_burnin_steps, num_lp_steps):
+def get_kernel(ii,num_burnin_steps, ntreelevel):
     x     = x_test[ii*params['batch_size']:(ii+1)*params['batch_size']]
     LP    = LogP(x)
     z_ini = get_encoded(x)
     adaptive_hmc = tfp.mcmc.DualAveragingStepSizeAdaptation(
         tfp.mcmc.NoUTurnSampler(
-            target_log_prob_fn=LP.logp,max_tree_depth=8,
+            target_log_prob_fn=LP.logp,max_tree_depth= ntreelevel,
             #num_leapfrog_steps=num_lp_steps,
             step_size=initial_step_size),
             num_adaptation_steps=int(num_burnin_steps * 0.8))
     return adaptive_hmc, z_ini, LP
 
 # Run the chain (with burn-in).
-#@tf.function()
+@tf.function()
 def run_chain(adapative_hmc, z_ini, num_burnin_steps):
   # Run the chain (with burn-in).
     samples, [step_size, accept_ratio, leapfrogs] = tfp.mcmc.sample_chain(
@@ -256,15 +256,13 @@ num_batch = 10000//128
 
 
 
-
-
 begin = time.time()
 samples_ = []
-for ii in range(0,20):
+for ii in range(60,78):
     print(ii)
     for jj, burnin in enumerate([200]):
-        for nn, numsteps in enumerate([5]):
-            adaptive_hmc, z_ini, LP= get_kernel(ii,burnin,numsteps)
+        for nn,  ntreelevel in enumerate([8]):
+            adaptive_hmc, z_ini, LP= get_kernel(ii,burnin, ntreelevel)
             samples, step_size, accept_ratio, leapfrogs = run_chain(adaptive_hmc, tf.convert_to_tensor(z_ini),tf.constant(burnin))
             end = time.time()-begin
             print(end)
@@ -275,9 +273,8 @@ samples = np.swapaxes(np.asarray(samples_),1,2)
 print(samples.shape)
 samples = np.reshape(samples,(-1,num_results,params['latent_size']))
 print(samples.shape)
-np.save(os.path.join('/global/cscratch1/sd/vboehm/PAE_samples/FMNIST/latent_dim32/PAE/samples','NUTS_FMNIST_latent_dim%d_burnin%d_leapfrog%d_1.npy'%(params['latent_size'],burnin,numsteps)),samples)
+np.save(os.path.join('/global/cscratch1/sd/vboehm/PAE_samples/FMNIST/latent_dim32/VAE/samples','NUTS_FMNIST_latent_dim%d_burnin%d_ntreelevel%d_4.npy'%(params['latent_size'], burnin, ntreelevel)),samples)
 # print('time:', end/60)
-
 
 
 
