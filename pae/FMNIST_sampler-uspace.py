@@ -70,7 +70,7 @@ load_funcs=dict(mnist=ld.load_mnist, fmnist=ld.load_fmnist)
 # In[7]:
 
 
-PROJECT_PATH = "../../" 
+PROJECT_PATH = "../" 
 PARAMS_PATH = os.path.join(PROJECT_PATH,'params')
 
 param_file  = 'params_fmnist_-1_32_infoGAN_AE_full_sigma'
@@ -80,7 +80,7 @@ params      = pickle.load(open(os.path.join(PARAMS_PATH,param_file+'.pkl'),'rb')
 # In[8]:
 
 
-params['module_dir']='../modules/mnist/class-1/latent_size32/net_type_infoGAN/loss_AE/_full_sigma'
+params['module_dir']='../modules/fmnist/class-1/latent_size32/net_type_infoGAN/loss_AE/_full_sigma'
 params['data_dir']= '../data/'
 
 
@@ -311,11 +311,11 @@ def run_chain(adapative_hmc, z_ini, num_burnin_steps):
 
 begin = time.time()
 samples_ = []
-for ii in range(20,40):
+for ii in range(0,15):
     print(ii)
     for jj, burnin in enumerate([200]):
-        for nn, ntreelevel in enumerate([8]):
-            adaptive_hmc, z_ini, LP = get_kernel(ii,burnin,numsteps)
+        for nn, ntreelevel in enumerate([7]):
+            adaptive_hmc, z_ini, LP = get_kernel(ii,burnin,ntreelevel)
             samples, step_size, accept_ratio, leapfrogs = run_chain(adaptive_hmc, tf.convert_to_tensor(z_ini),tf.constant(burnin))
             end = time.time()-begin
             print(end)
@@ -327,7 +327,7 @@ samples = np.swapaxes(np.asarray(samples_),1,2)
 print(samples.shape)
 samples = np.reshape(samples,(-1,num_results,params['latent_size']))
 print(samples.shape)
-np.save(os.path.join('/global/cscratch1/sd/vboehm/PAE_samples/FMNIST/latent_dim32/PAE/samples','NUTS_FMNISTuspace_latent_dim%d_burnin%d_ntreelevel%d_2.npy'%(params['latent_size'],burnin,ntreelevel)),samples)
+np.save(os.path.join('/global/cscratch1/sd/vboehm/PAE_samples/FMNIST/latent_dim32/PAE/samples','NUTS_FMNISTuspace_latent_dim%d_burnin%d_ntreelevel%d_1.npy'%(params['latent_size'],burnin,ntreelevel)),samples)
 # print('time:', end/60)
 
 
