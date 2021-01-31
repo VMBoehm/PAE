@@ -311,7 +311,7 @@ def run_chain(adapative_hmc, z_ini, num_burnin_steps):
 
 begin = time.time()
 samples_ = []
-for ii in range(0,15):
+for ii in range(60,78):
     print(ii)
     for jj, burnin in enumerate([200]):
         for nn, ntreelevel in enumerate([7]):
@@ -327,7 +327,7 @@ samples = np.swapaxes(np.asarray(samples_),1,2)
 print(samples.shape)
 samples = np.reshape(samples,(-1,num_results,params['latent_size']))
 print(samples.shape)
-np.save(os.path.join('/global/cscratch1/sd/vboehm/PAE_samples/FMNIST/latent_dim32/PAE/samples','NUTS_FMNISTuspace_latent_dim%d_burnin%d_ntreelevel%d_1.npy'%(params['latent_size'],burnin,ntreelevel)),samples)
+np.save(os.path.join('/global/cscratch1/sd/vboehm/PAE_samples/FMNIST/latent_dim32/PAE/samples','NUTS_FMNISTuspace_latent_dim%d_burnin%d_ntreelevel%d_5.npy'%(params['latent_size'],burnin,ntreelevel)),samples)
 # print('time:', end/60)
 
 
