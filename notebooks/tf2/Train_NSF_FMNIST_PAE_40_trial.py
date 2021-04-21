@@ -127,6 +127,8 @@ reconv = likelihood(zv).mean()
 
 
 # In[15]:
+num_layers_bins = 0.
+num_layers_slope = 0.
 
 
 sess = tf.Session()
@@ -229,11 +231,11 @@ class SplineParams(tf.Module):
         return tf.math.softmax(net, axis=-1) * (2 - self._nbins * 1e-2) + 1e-2
 
     def _slopes(self, x):
-        x = tf.reshape(x, [-1,  self._nunits, ( self._nbins - 1)])
-#         net = tf.layers.Dense(self._nunits)(x)
-#         net = tf.nn.leaky_relu(net)
-#         net = tf.layers.Dense(self._nbins-1)(net)
-#         net = tf.reshape(net, [-1,  self._nunits, ( self._nbins - 1)])
+        #x = tf.reshape(x, [-1,  self._nunits, ( self._nbins - 1)])
+        net = tf.layers.Dense(self._nunits)(x)         
+        net = tf.nn.leaky_relu(net)
+        net = tf.layers.Dense(self._nbins-1)(net)
+        net = tf.reshape(net, [-1,  self._nunits, ( self._nbins - 1)])
         return tf.math.softplus(x) + 1e-2
 
     def __call__(self, x, nunits):
@@ -282,7 +284,7 @@ def trainable_lu_factorization(
 
 
 #14.97072028,  4,  6,  3.43952439, 36
-tag                     = 'tag1'
+tag                     = 'tag2'
 nvp_depth        = 14
 dims                  = np.asarray(nvp_depth*[params['latent_size']])#+10*[20])
 nvp_size            = np.arange(nvp_depth)
