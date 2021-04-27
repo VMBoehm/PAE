@@ -231,7 +231,7 @@ class SplineParams(tf.Module):
         return tf.math.softmax(net, axis=-1) * (2 - self._nbins * 1e-2) + 1e-2
 
     def _slopes(self, x):
-        #x = tf.reshape(x, [-1,  self._nunits, ( self._nbins - 1)])
+        x = tf.reshape(x, [-1,  self._nunits, ( self._nbins - 1)])
         net = tf.layers.Dense(self._nunits)(x)         
         net = tf.nn.leaky_relu(net)
         net = tf.layers.Dense(self._nbins-1)(net)
@@ -284,16 +284,16 @@ def trainable_lu_factorization(
 
 
 #14.97072028,  4,  6,  3.43952439, 36
-tag                     = 'tag2'
-nvp_depth        = 14
-dims                  = np.asarray(nvp_depth*[params['latent_size']])#+10*[20])
-nvp_size            = np.arange(nvp_depth)
-indices              = np.arange(params['latent_size'])
+tag                     = 'tag7'
+nvp_depth               = 20
+dims                    = np.asarray(nvp_depth*[params['latent_size']])#+10*[20])
+nvp_size                = np.arange(nvp_depth)
+indices                 = np.arange(params['latent_size'])
 
-num_nsf           = 4
-num_nvp          = 8
-scale                  = 3.44
-noise_               = 0.0
+num_nsf                 = 4
+num_nvp                 = 8
+scale                   = 3.44
+noise_                  = 0.0
 
 nbins                      = 36
 
@@ -428,7 +428,7 @@ plt.legend()
 plt.savefig(os.path.join(params['plot_dir'],'RealNVP_loss_%s.pdf'%tag),bbox_inches='tight')
 
 
-
+pickle.dump([nvp_tloss,nvp_vloss],open(os.path.join(params['plot_dir'],'RealNVP_loss_%s.pkl'%tag),'wb'))
 
 
 
