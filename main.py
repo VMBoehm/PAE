@@ -35,6 +35,7 @@ flags.DEFINE_string('module_dir', default=os.path.join(os.path.abspath('./'),'mo
 flags.DEFINE_string('data_dir', default=os.path.join(os.path.abspath('./'),'data'), help='directory to store the data')
 flags.DEFINE_integer('celeba_dim', default=64, help='pixel dimension of celeb data')
 
+flags.DEFINE_boolean('flow_prior', default='False', help='whether to use a flow prior')
 flags.DEFINE_float('learning_rate', default=1e-4, help='learning rate')    
 flags.DEFINE_integer('batch_size',default=16, help='batch size')
 flags.DEFINE_integer('max_steps', default=500000, help='training steps')    
@@ -73,6 +74,14 @@ flags.DEFINE_integer('num_scale', default=4, help='number of scaling blocks in r
 flags.DEFINE_integer('block_per_scale', default=1, help='number of residual blocks per scaling block')
 flags.DEFINE_integer('depth_per_block', default=2, help='depth of network in each block')
 flags.DEFINE_integer('fc_dim', default=512, help='output dimensionality of fully conncted residual block')
+
+#flow params
+flags.DEFINE_integer('flow_depth', default=20, help='number of layers in the flow prior')
+flags.DEFINE_integer('num_nsf', default=4 , help='number of neural spline flow layers')
+flags.DEFINE_integer('num_nvp', default=8, help='number of RealNVP layers with shift and scale')
+flags.DEFINE_float('scale', default=10 , help='rescaling to fit NSF bounds')
+
+
 
 FLAGS= flags.FLAGS
 

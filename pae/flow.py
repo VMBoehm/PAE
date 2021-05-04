@@ -74,16 +74,20 @@ def trainable_lu_factorization(
 
 
 def get_nvp(params):
+    
+    dims              = np.asarray(params['nvp_depth']*[params['latent_size']])
+    nvp_size          = np.arange(params['nvp_depth'])
+    indices           = np.arange(params['latent_size'])
     base_dis          = get_prior(params['latent_size'])
     chain             = []
-    reduction         = (params['latent_size']-params['flow_dims'])/params['latent_size']
+    reduction         = (params['latent_size']-dims)/params['latent_size']
     current_size      = []
     perms_swap        = []
     perms_rand        = []
     perms_train       = []
     splines           = []
     size              = []
-    for i,s in enumerate(params['flow_size']):
+    for i,s in enumerate(nvp_size):
         current_size  = np.int(params['latent_size']*(1-reduction[i]))
         swapping      = np.concatenate((np.arange(current_size//2,current_size),np.arange(0, current_size//2)))
         perms_swap.append(tfb.Permute(permutation=init_once(swapping,name="perm_swap%d"%i)))
@@ -99,9 +103,9 @@ def get_nvp(params):
             chain.append(tfb.Blockwise(bijectors=[perms_train[i],tfb.Identity()],block_sizes=[size[i],params['latent_size']-size[i]]))
         else:
             chain.append(tfb.Blockwise(bijectors=[perms_swap[i],tfb.Identity()],block_sizes=[size[i],params['latent_size']-size[i]]))
-        if i<num_nsf: 
+        if i<params['num_nsf']: 
             bijector1 = tfb.RealNVP(num_masked=size[i]-size[i]//2,bijector_fn=splines[i])
-        if i<num_nsf+num_nvp and i>num_nsf:
+        if i<params['num_nsf']+params['num_nvp'] and i>params['num_nsf']:
             bijector1 = tfb.RealNVP(num_masked=size[i]-size[i]//2,shift_and_log_scale_fn=tfb.real_nvp_default_template(hidden_layers=[params['latent_size'],params['latent_size']]))                 
         else:
             bijector1 = tfb.RealNVP(num_masked=size[i]-size[i]//2,shift_and_log_scale_fn=tfb.real_nvp_default_template(hidden_layers=[params['latent_size'],params['latent_size']],shift_only=True))  

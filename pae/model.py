@@ -19,7 +19,7 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 tfd = tfp.distributions
 import pae.networks as nw
-
+import pae.flow as fl
 
 ### these two functions are inspired by https://github.com/tensorflow/probability/blob/master/tensorflow_probability/examples/vae.py and modified to work with flattened data by adding a shape keyword
 
@@ -118,10 +118,11 @@ def model_fn(features, labels, mode, params, config):
 
     encoder          = nw.make_encoder(params, is_training)
     decoder          = nw.make_decoder(params, is_training)
+
+    if params['flow_prior']:
+        flow_prior = fl.make_nvp(params)
     
     global_step      = tf.train.get_or_create_global_step()
-    #stage            = tf.greater(global_step,tf.constant(params['max_steps']//2,dtype=tf.int64))
-    #stage2           = tf.equal(global_step,tf.constant(params['max_steps']//2,dtype=tf.int64))
 
     prior            = get_prior(params['latent_size'])
 
@@ -133,43 +134,34 @@ def model_fn(features, labels, mode, params, config):
 
     chi2             = tf.stop_gradient(tf.reshape(tf.square(decoded-features),[params['batch_size'],-1]))
     
-    #first taking sqrt and then averaging over batch (correct?)    	
-    #sigma_pixel      = tf.reduce_mean(tf.sqrt(chi2),axis=0)
-    #sigma_mean       = tf.reduce_mean(tf.sqrt(tf.reduce_mean(chi2,axis=1)),axis=0)
-    #sigma_mean       = sigma_mean*tf.ones([np.prod(params['output_size'])])
 
     #first averaging over batch then sqrt      
     sigma_pixel      = tf.sqrt(tf.reduce_mean(chi2,axis=0))
-    #ema              = tf.train.ExponentialMovingAverage(decay=0.99)
-    #ema.apply([sigma_pixel])
     
     sigma_mean       = tf.sqrt(tf.reduce_mean(chi2))
-    #sigma_mean       = sigma_mean*tf.ones([np.prod(params['output_size'])])
-
-    #sigma_est        = tf.cond(tf.constant(params['full_sigma'],dtype=tf.bool),lambda: sigma_pixel,lambda: sigma_mean)
-    #sigma_reg        = tf.maximum(sigma_est,params['sigma']*tf.ones([np.prod(params['output_size'])]))
-
-    #with tf.variable_scope("likelihood", reuse=tf.AUTO_REUSE):
-    #    sigma = tf.get_variable(name='sigma', initializer=tf.ones([np.prod(params['output_size'])])*params['sigma'])
-    
-    #if not params['loss']=='VAE':
-    #    sigma        = tf.cond(stage2,lambda:sigma.assign(sigma_reg),lambda:sigma)
     
     if params['sigma_annealing']:
         sigma = tf.cond(global_step<200000,lambda: 1.-tf.cast(global_step,tf.float32)/200000.*(1.-params['sigma']), lambda: params['sigma'])
     else:
         sigma = params['sigma']
 
-    likelihood       = get_likelihood(decoder,sigma,params)
+    likelihood        = get_likelihood(decoder,sigma,params)
 
     
-    map_likelihood   = likelihood(MAP).log_prob(tf.reshape(features,[params['batch_size'],-1]))
-    kl               = 0.5 * tf.reduce_sum(tf.square(approx_posterior.scale.diag) + tf.square(approx_posterior.loc) - tf.log(tf.square(approx_posterior.scale.diag))-1, axis=-1)
+    map_likelihood    = likelihood(MAP).log_prob(tf.reshape(features,[params['batch_size'],-1]))
+
+    posterior_sample  = approx_posterior.sample()
+
+    if params['flow_prior']:
+        kl1 = -approx_posterior.entropy() 
+        kl2 = flow_prior({'z_sample':posterior_sample,'sample_size':1, 'u_sample':np.zeros((1,params['latent_size']))})['log_prob']
+        kl  = kl1-kl2 
+    else:
+        kl               = 0.5 * tf.reduce_sum(tf.square(approx_posterior.scale.diag) + tf.square(approx_posterior.loc) - tf.log(tf.square(approx_posterior.scale.diag))-1, axis=-1)
     
     kl_lambda         = tf.maximum(kl - params['lambda'], 0.0)
-    posterior_sample  = approx_posterior.sample()
     sample_likelihood = likelihood(posterior_sample).log_prob(tf.reshape(features,[params['batch_size'],-1]))
-
+    
     objective_AE     = map_likelihood
 
     if params['beta_VAE']:
