@@ -1,4 +1,7 @@
 # Probabilistic Auto-Encoder (PAE)
+
+***NEW***: Fully modular, easy-to-use pytorch implementation with tutorial can be found at https://github.com/VMBoehm/PytorchPAE
+
 An easy-to-train and evaluate, reliable generative model that achieves state of the art results in data generation, outlier detection and data inpainting and denoising.
 
 For full details, see:
