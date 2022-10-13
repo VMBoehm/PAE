@@ -5,7 +5,7 @@
 An easy-to-train and evaluate, reliable generative model that achieves state of the art results in data generation, outlier detection and data inpainting and denoising.
 
 For full details, see:
-https://arxiv.org/abs/2006.05479.
+https://openreview.net/pdf?id=AEoYjvjKVA.
 
 **Contributors:** Vanessa Böhm, Uroš Seljak
 
