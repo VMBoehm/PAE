@@ -133,12 +133,6 @@ If you use this code for your research, please cite our [paper](https://arxiv.or
        year={2022},
        url={https://openreview.net/forum?id=AEoYjvjKVA},
        adsurl = {https://ui.adsabs.harvard.edu/abs/2020arXiv200605479B},
-      adsnote = {Provided by the SAO/NASA Astrophysics Data System},
-      eid = {arXiv:2006.05479},
-      pages = {arXiv:2006.05479},
-      archivePrefix = {arXiv},
-      eprint = {2006.05479},
-      primaryClass = {cs.LG},
-      doi = {10.48550/ARXIV.2006.05479}
+       doi = {10.48550/ARXIV.2006.05479}
 }
 ```
