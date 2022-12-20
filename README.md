@@ -120,3 +120,25 @@ and the FID scores require pytorch
 torch                     1.4.0
 
 Running the PAE on celeba will require downloading the celeba dataset (http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) and preprocessing it with the **`load_celeba_data`** function in **`pae/load_data.py`**
+
+## Citation
+
+If you use this code for your research, please cite our [paper](https://arxiv.org/abs/2006.05479):
+
+```
+@ARTICLE{PAE,
+       author = {{B{\"o}hm}, Vanessa and {Seljak}, Uro{\v{s}}},
+       title={Probabilistic Autoencoder},
+       journal={Transactions on Machine Learning Research},
+       year={2022},
+       url={https://openreview.net/forum?id=AEoYjvjKVA},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2020arXiv200605479B},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+      eid = {arXiv:2006.05479},
+      pages = {arXiv:2006.05479},
+      archivePrefix = {arXiv},
+      eprint = {2006.05479},
+      primaryClass = {cs.LG},
+      doi = {10.48550/ARXIV.2006.05479}
+}
+```
